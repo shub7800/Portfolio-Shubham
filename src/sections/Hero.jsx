@@ -10,9 +10,11 @@ import {
 import { AnimatedBorderButton } from "../components/AnimatedBorderButton";
 import resumePdf from "../assets/ShubhamGupta_Resume.pdf";
 
+import { scrollToSection } from "@/utils/scrollToSection";
+
 const skills = [
   "React",
-  
+
   "JavaScript",
   "Node.js",
   "n8n",
@@ -96,7 +98,7 @@ export const Hero = () => {
 
             {/* CTAs */}
             <div className="flex flex-wrap gap-4 animate-fade-in animation-delay-300">
-              <Button size="lg">
+              <Button size="lg" onClick={() => scrollToSection("contact")}>
                 Contact Me <ArrowRight className="w-5 h-5" />
               </Button>
 

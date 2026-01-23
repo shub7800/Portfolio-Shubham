@@ -14,14 +14,14 @@ const contactInfo = [
   {
     icon: Mail,
     label: "Email",
-    value: "shubhamgupta780048@gmail.com",
-    href: "mailto:shubhamgupta780048@gmail.com",
+    value: "shubham1703gupta@gmail.com",
+    href: "mailto:shubham1703gupta@gmail.com",
   },
   {
     icon: Phone,
     label: "Phone",
     value: "+91 78004 85353",
-    href: "+91 78004 85353",
+    href: "tel:+917800485353",
   },
   {
     icon: MapPin,
@@ -37,55 +37,56 @@ export const Contact = () => {
     email: "",
     message: "",
   });
+
   const [isLoading, setIsLoading] = useState(false);
   const [submitStatus, setSubmitStatus] = useState({
-    type: null, // 'success' or 'error'
+    type: null,
     message: "",
   });
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    if (!formData.name || !formData.email || !formData.message) {
+      setSubmitStatus({
+        type: "error",
+        message: "Please fill in all fields.",
+      });
+      return;
+    }
+
     setIsLoading(true);
     setSubmitStatus({ type: null, message: "" });
+
     try {
-      const serviceId = import.meta.env.VITE_EMAILJS_SERVICE_ID;
-      const templateId = import.meta.env.VITE_EMAILJS_TEMPLATE_ID;
-      const publicKey = import.meta.env.VITE_EMAILJS_PUBLIC_KEY;
-
-      if (!serviceId || !templateId || !publicKey) {
-        throw new Error(
-          "EmailJS configuration is missing. Please check your environment variables.",
-        );
-      }
-
       await emailjs.send(
-        serviceId,
-        templateId,
+        import.meta.env.VITE_EMAILJS_SERVICE_ID,
+        import.meta.env.VITE_EMAILJS_TEMPLATE_ID,
         {
           name: formData.name,
           email: formData.email,
           message: formData.message,
         },
-        publicKey,
+        import.meta.env.VITE_EMAILJS_PUBLIC_KEY
       );
 
       setSubmitStatus({
         type: "success",
         message: "Message sent successfully! I'll get back to you soon.",
       });
+
       setFormData({ name: "", email: "", message: "" });
-    } catch (err) {
-      console.error("EmailJS error:", error);
+    } catch (error) {
+      console.error("EmailJS Error:", error);
       setSubmitStatus({
         type: "error",
-        message:
-          error.text || "Failed to send message. Please try again later.",
+        message: "Failed to send message. Please try again later.",
       });
     } finally {
       setIsLoading(false);
     }
   };
+
   return (
     <section id="contact" className="py-32 relative overflow-hidden">
       <div className="absolute top-0 left-0 w-full h-full">
@@ -115,52 +116,39 @@ export const Contact = () => {
         </div>
 
         <div className="grid lg:grid-cols-2 gap-12 max-w-5xl mx-auto">
+          {/* Form */}
           <div className="glass p-8 rounded-3xl border border-primary/30 animate-fade-in animation-delay-300">
             <form className="space-y-6" onSubmit={handleSubmit}>
               <div>
-                <label
-                  htmlFor="name"
-                  className="block text-sm font-medium mb-2"
-                >
-                  Name
-                </label>
+                <label className="block text-sm font-medium mb-2">Name</label>
                 <input
-                  id="name"
                   type="text"
                   required
-                  placeholder="Your name..."
                   value={formData.name}
                   onChange={(e) =>
                     setFormData({ ...formData, name: e.target.value })
                   }
                   className="w-full px-4 py-3 bg-surface rounded-xl border border-border focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all"
+                  placeholder="Your name..."
                 />
               </div>
 
               <div>
-                <label
-                  htmlFor="email"
-                  type="email"
-                  className="block text-sm font-medium mb-2"
-                >
-                  Email
-                </label>
+                <label className="block text-sm font-medium mb-2">Email</label>
                 <input
+                  type="email"
                   required
-                  placeholder="your@email.com"
                   value={formData.email}
                   onChange={(e) =>
                     setFormData({ ...formData, email: e.target.value })
                   }
                   className="w-full px-4 py-3 bg-surface rounded-xl border border-border focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all"
+                  placeholder="your@email.com"
                 />
               </div>
 
               <div>
-                <label
-                  htmlFor="message"
-                  className="block text-sm font-medium mb-2"
-                >
+                <label className="block text-sm font-medium mb-2">
                   Message
                 </label>
                 <textarea
@@ -170,8 +158,8 @@ export const Contact = () => {
                   onChange={(e) =>
                     setFormData({ ...formData, message: e.target.value })
                   }
-                  placeholder="Your message..."
                   className="w-full px-4 py-3 bg-surface rounded-xl border border-border focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all resize-none"
+                  placeholder="Your message..."
                 />
               </div>
 
@@ -182,28 +170,26 @@ export const Contact = () => {
                 disabled={isLoading}
               >
                 {isLoading ? (
-                  <>Sending...</>
+                  "Sending..."
                 ) : (
                   <>
-                    Send Message
-                    <Send className="w-5 h-5" />
+                    Send Message <Send className="w-5 h-5" />
                   </>
                 )}
               </Button>
 
               {submitStatus.type && (
                 <div
-                  className={`flex items-center gap-3
-                     p-4 rounded-xl ${
-                       submitStatus.type === "success"
-                         ? "bg-green-500/10 border border-green-500/20 text-green-400"
-                         : "bg-red-500/10 border border-red-500/20 text-red-400"
-                     }`}
+                  className={`flex items-center gap-3 p-4 rounded-xl ${
+                    submitStatus.type === "success"
+                      ? "bg-green-500/10 border border-green-500/20 text-green-400"
+                      : "bg-red-500/10 border border-red-500/20 text-red-400"
+                  }`}
                 >
                   {submitStatus.type === "success" ? (
-                    <CheckCircle className="w-5 h-5 flex-shrink-0" />
+                    <CheckCircle className="w-5 h-5" />
                   ) : (
-                    <AlertCircle className="w-5 h-5 flex-shrink-0" />
+                    <AlertCircle className="w-5 h-5" />
                   )}
                   <p className="text-sm">{submitStatus.message}</p>
                 </div>
@@ -238,7 +224,6 @@ export const Contact = () => {
               </div>
             </div>
 
-            {/* Availability Card */}
             <div className="glass rounded-3xl p-8 border border-primary/30">
               <div className="flex items-center gap-3 mb-4">
                 <span className="w-3 h-3 bg-green-500 rounded-full animate-pulse" />
@@ -248,9 +233,7 @@ export const Contact = () => {
               <p className="text-muted-foreground text-sm">
                 I’m currently open to software development roles where I can
                 contribute to building scalable, production-ready web
-                applications. If you’re looking for someone with strong React
-                experience and a focus on clean, maintainable code, I’d be happy
-                to connect.
+                applications.
               </p>
             </div>
           </div>
